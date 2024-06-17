@@ -46,6 +46,7 @@ DELTA = '\u03B4	'
 RHO = '\u03C1'
 PI = '\u03C0'
 
+#Should be done with a configuration file
 LETTERS = ['al', 'be', 'ga', 'de', 'ro', 'pi']
 LETTERS_VALUE = [ALPHA, BETA, GAMMA, DELTA, RHO, PI]
 

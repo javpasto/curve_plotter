@@ -4,6 +4,8 @@ author: Javier Pastor Ramirez
 
 from mpl_toolkits import mplot3d
 #%matplotlib inline
+import matplotlib
+matplotlib.use('WXAgg')
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -46,6 +48,15 @@ class MyFrame(wx.Frame):
     def __init__(self):
         super().__init__(parent=None, title='Curve Plotter')
 
+        #ico = wx.Icon('C:/Users/javie/Desktop/curve_plotter/curve_plotter/curve_plotter_logo.jpg', wx.BITMAP_TYPE_ICO)
+        icon = wx.Icon('C:/Users/javie/Desktop/curve_plotter/curve_plotter/curve_plotter_initials.ico')
+        self.SetIcon(icon)
+
+        #Set up the icon on the taskbar
+        import ctypes
+        my_app_id = r'mycompany.myproduct.subproduct.version'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(my_app_id)
+
         #For the row heights
         counter = 0
 
@@ -60,9 +71,13 @@ class MyFrame(wx.Frame):
 
         #Parameters
         for i in range(0, len(self.parameters)):
-            self.parameters[i].parameter_name_ui_edit =  user_interface.MyTextCtrl(self, 'parameter name', (utility.FIRST_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter)) 
-            self.parameters[i].lower_bound_ui_edit = user_interface.MyTextCtrl(self, 'lower bound', (utility.SECOND_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter))
-            self.parameters[i].upper_bound_ui_edit = user_interface.MyTextCtrl(self, 'upper bound', (utility.THIRD_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter))
+            if i == 0:
+                self.parameters[i].parameter_name_ui_edit =  user_interface.MyTextCtrl(self, 'parameter name', (utility.FIRST_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter)) 
+                self.parameters[i].lower_bound_ui_edit = user_interface.MyTextCtrl(self, 'lower bound', (utility.SECOND_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter))
+                self.parameters[i].upper_bound_ui_edit = user_interface.MyTextCtrl(self, 'upper bound', (utility.THIRD_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter))
+            if i > 0:
+                self.parameters[i].parameter_name_ui_edit =  user_interface.MyTextCtrl(self, 'parameter name', (utility.FIRST_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter)) 
+                self.parameters[i].lower_bound_ui_edit = user_interface.MyTextCtrl(self, 'value', (utility.SECOND_COLUMN, utility.USER_INTERFACE_MARGINS + utility.SPACING_ROWS*counter))
             counter += 1
 
         #Vectors
@@ -167,27 +182,6 @@ class MyFrame(wx.Frame):
         self.legend_value = ""
         return
     
-        self.legend_value = ALPHA + '('
-        self.legend_value += self.parameter_names[0]
-        for i in range(1, len(self.parameter_names)):
-            self.legend_value += ', ' + self.parameter_names[i]
-        self.legend_value += ') = ('
-
-        if (self.x_tree is not None):
-            self.legend_value += self.x_tree.to_string()
-        
-        if (self.y_tree is not None):
-            self.legend_value += ', ' + self.y_tree.to_string()
-        
-        if (self.z_tree is not None):
-            self.legend_value += ', ' + self.z_tree.to_string()
-
-        self.legend_value += ')'
-
-        self.legend_value += '\n    | ' + self.parameter_names[0] + ' = (' + self.param_1_legend_bounds[0] + ', ' +  self.param_1_legend_bounds[1] + ')'
-        if len(self.parameter_names) > 1:
-            self.legend_value += '\n    | ' + self.parameter_names[1] + ' = ' + self.param_2_legend_bounds
-
     def solve_trees(self):
         parameter_arrays = []
         
@@ -269,12 +263,6 @@ class MyFrame(wx.Frame):
                     rtr += ' = ' + parameter.lower_bound_text + '\n'
         
         return rtr
-        dummy_patch = mpatches.Patch(color='none', label='Parameters')
-        handles, labels = self.plotter.gca().get_legend_handles_labels()
-        handles.append(dummy_patch)
-        labels.append(rtr)
-        
-        self.plotter.legend(handles=handles, labels=labels)
 
     def plotting_2d(self):
         #Ignore the z axi
@@ -298,7 +286,7 @@ class MyFrame(wx.Frame):
         handles.append(dummy_patch)
         labels.append(self.parameter_legend())
         
-        self.plotter.legend(handles=handles, labels=labels)
+        #self.plotter.legend(handles=handles, labels=labels)
 
         self.plotter.axis([self.bounds.x_bounds[0], self.bounds.x_bounds[1], self.bounds.y_bounds[0], self.bounds.y_bounds[1]])
         self.plotter.gca().set_aspect('equal', adjustable='box')
@@ -338,50 +326,48 @@ class MyFrame(wx.Frame):
         plt.close()
         
         #Initialize curves, vectors, parameters, bounds, controls
-        self.initialize()
+        try:
+            self.initialize()
+        except Exception as err:
+            self.warning_message("[ERROR:] Initializing values, " + str(err))
+            return False
+       
 
         #Translate special characters
-        self.translate()
+        try:
+            self.translate()
+        except Exception as err:
+            self.warning_message("[ERROR:] Translating values, " + str(err))
+            return False
 
         #Create bound arrays
-        self.create_bounds()
+        try:
+            self.create_bounds()
+        except Exception as err:
+            self.warning_message("[ERROR:] Creating bounds, " + str(err))
+            return False
 
         #Create curve trees
-        self.create_trees()
+        try:
+            self.create_trees()
+        except Exception as err:
+            self.warning_message("[ERROR:] Creating trees, " + str(err))
+            return False
 
         #Solve curve trees
-        self.solve_trees()
+        try:
+            self.solve_trees()
+        except Exception as err:
+            self.warning_message("[ERROR:] Solving trees, " + str(err))
+            return False
 
         #Plot the results
-        self.plotting()
+        try:
+            self.plotting()
+        except Exception as err:
+            self.warning_message("[ERROR:] Plotting the results, " + str(err))
+            return False
 
-def test():
-    # Crear un vector
-    # Coordenadas del vector
-    X = 2
-    Y = 3
-    Z = 4
-    vector = np.array([X, Y, Z])
-
-    # Crear una figura
-    figura = plt.figure()
-    ax = figura.add_subplot(111, projection='3d')
-
-    # Graficar el vector
-    ax.quiver(0, 0, 0, vector[0], vector[1], vector[2], color='r', label='Vector')
-
-    # Personalizar el gráfico
-    ax.set_xlim([0, 5])
-    ax.set_ylim([0, 5])
-    ax.set_zlim([0, 5])
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    ax.set_title('Representación de un Vector en 3D')
-    ax.legend()
-
-    # Mostrar el gráfico
-    plt.show()
 
 def Innit():
     app = wx.App()
@@ -389,20 +375,4 @@ def Innit():
     frame.Show()
     app.MainLoop()
 
-def quiver_test():
-
-    plotter = plt.axes(projection='3d')
-    plotter.set_xlim([-5,5])
-    plotter.set_ylim([-5,5])
-    plotter.set_zlim([-5,5])
-        
-    plotter.set_xlabel('x')
-    plotter.set_ylabel('y') 
-    plotter.set_zlabel('z')
-
-    plotter.quiver(0, 0, 0, 2, 1, 1, color='r', label='quiver_test')
-    plt.show()
-        
-
-#quiver_test()
 Innit()

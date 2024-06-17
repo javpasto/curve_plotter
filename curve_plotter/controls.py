@@ -15,7 +15,7 @@ class Controls(wx.App):
 
     def initialize(self):
         if (self.steps_ui_edit.GetValue() != ''):
-            self.steps_value = float(self.steps_ui_edit.GetValue())
+            self.steps_value = int(self.steps_ui_edit.GetValue())
         
         self.plot_2d_checked = self.plot_2d_ui_checkbox.IsChecked()
 
