@@ -5,7 +5,7 @@ author: Javier Pastor Ramirez
 from mpl_toolkits import mplot3d
 #%matplotlib inline
 import matplotlib
-matplotlib.use('WXAgg')
+matplotlib.use('WXAgg') #For windowed application
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -49,8 +49,8 @@ class MyFrame(wx.Frame):
         super().__init__(parent=None, title='Curve Plotter')
 
         #ico = wx.Icon('C:/Users/javie/Desktop/curve_plotter/curve_plotter/curve_plotter_logo.jpg', wx.BITMAP_TYPE_ICO)
-        icon = wx.Icon('C:/Users/javie/Desktop/curve_plotter/curve_plotter/curve_plotter_initials.ico')
-        self.SetIcon(icon)
+        #icon = wx.Icon('C:/Users/javie/Desktop/curve_plotter/curve_plotter/curve_plotter_initials.ico')
+        #self.SetIcon(icon)
 
         #Set up the icon on the taskbar
         import ctypes

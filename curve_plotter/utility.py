@@ -24,6 +24,7 @@ FIFTH_COLUMN = 10 + SPACING_COLUMNS*4
 
 WIDTH = 10 + SPACING_COLUMNS*5
 
+#Should be done with a configuration file
 COLORS_GRAPH = ['b', 'c', 'g', 'k', 'm' ,'r' ,'w' ,'y']
 COLORS_USER_INTERFACE = ['blue', 'cyan', 'green', 'black', 'magenta', 'red', 'white', 'yellow']
 DEFAULT_VECTOR_COLOR = 'r'
